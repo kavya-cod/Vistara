@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#10101f" />
+    <meta name="description" content="Vistara is a browser-based presentation studio for annotating images, PDF pages, and PowerPoint slides." />
+    <title>Vistara — Gesture Studio</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/pptxviewjs@1.1.9/dist/PptxViewJS.min.js" defer></script>
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell" id="app-shell">
+      <aside class="sidebar" aria-label="Main navigation">
+        <a class="brand" href="#workspace" aria-label="Vistara Gesture Studio home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M9 12h10l5 8 5-8h10L24 37 9 12Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round" /><path d="m19 12 5 8 5-8" stroke="currentColor" stroke-width="2" opacity=".65" /></svg>
+          </span>
+          <span class="brand-copy"><strong>VISTARA<span class="brand-spark">✦</span></strong><small>SMART PRESENTATION<br />CONTROL SYSTEM</small></span>
+        </a>
+
+        <div class="sidebar-label">WORKSPACE</div>
+        <nav class="navigation">
+          <a class="nav-link active" href="#workspace" aria-current="page">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z" /></svg>
+            <span>Studio</span>
+          </a>
+          <a class="nav-link" href="#gesture-guide">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11V5a1.5 1.5 0 0 1 3 0v5-7a1.5 1.5 0 0 1 3 0v7-5a1.5 1.5 0 0 1 3 0v7-3a1.5 1.5 0 0 1 3 0v6c0 4-2 7-6 7h-2c-2 0-3-.7-4-2l-3-4a1.8 1.8 0 0 1 2.8-2.2L8 16v-5Z" /></svg>
+            <span>Gesture guide</span>
+          </a>
+          <a class="nav-link" href="#camera-panel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z" /><circle cx="12" cy="13" r="4" /></svg>
+            <span>Camera</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="sidebar-note">
+            <span class="note-rule" aria-hidden="true"></span>
+            <p>Your hands.<br />Your presentation.<br /><em>Your control.</em></p>
+            <span class="note-spark" aria-hidden="true">✦</span>
+          </div>
+          <div class="sidebar-credit"><span class="status-dot"></span> Browser studio ready</div>
+        </div>
+      </aside>
+
+      <main class="main-content" id="workspace">
+        <header class="topbar">
+          <div class="topbar-title">
+            <span class="eyebrow">GESTURE PRESENTATION STUDIO</span>
+            <h1>Make your next move.</h1>
+            <p>Prepare your visuals, then take the stage.</p>
+          </div>
+          <div class="topbar-actions">
+            <div class="system-pill" id="system-status"><span class="status-dot"></span><span>Studio online</span></div>
+            <button class="button button-secondary" id="upload-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 14v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5" /></svg>
+              Import slides
+            </button>
+            <button class="button button-primary" id="present-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7V5Z" fill="currentColor" stroke="none" /></svg>
+              Present
+            </button>
+            <input class="visually-hidden" id="image-input" type="file" accept="image/*,application/pdf,.pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,.pptx" multiple aria-label="Choose images, PDF files, or PowerPoint presentations to add to the presentation" />
+          </div>
+        </header>
+
+        <section class="studio-grid" aria-label="Presentation editor">
+          <div class="editor-column">
+            <section class="panel canvas-panel" aria-labelledby="canvas-heading">
+              <header class="panel-heading canvas-heading">
+                <div class="panel-title-group">
+                  <span class="heading-icon cyan-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9" r="1.5" /><path d="m21 15-5-5L5 20" /></svg>
+                  </span>
+                  <div><h2 id="canvas-heading">Presentation canvas</h2><p id="active-image-name">Pacific coast — demo image</p></div>
+                </div>
+                <div class="slide-count" id="slide-count" aria-live="polite">01 <span>/</span> 01</div>
+              </header>
+
+              <div class="canvas-stage" id="canvas-stage">
+                <canvas id="editor-canvas" aria-label="Editable presentation slide canvas. Select Draw to annotate or Pointer to show a highlight. Focus the canvas and use arrow keys to move the keyboard cursor, then press Enter or Space to draw a mark." role="img" tabindex="0">Your browser does not support the HTML canvas element.</canvas>
+                <div class="canvas-chip"><span class="status-dot"></span><span id="canvas-status">DEMO CANVAS</span></div>
+                <div class="canvas-empty" id="canvas-empty" hidden>
+                  <div class="empty-upload-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 14v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5" /></svg>
+                  </div>
+                  <strong>Your canvas is ready</strong>
+                  <span>Drop images, PDFs, or a PowerPoint (.pptx) here. Documents are rendered in your browser.</span>
+                  <button class="button button-secondary" id="empty-upload-button" type="button">Choose files</button>
+                </div>
+                <button class="exit-present" id="exit-present" type="button" aria-label="Exit presentation">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12" /></svg>
+                  Exit presentation
+                </button>
+              </div>
+
+              <div class="slide-navigation">
+                <button class="icon-button" id="previous-slide" type="button" aria-label="Previous slide" title="Previous slide (←)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7M21 5l-7 7 7 7" /></svg>
+                </button>
+                <div class="filmstrip" id="slide-list" role="list" aria-label="Presentation slides"></div>
+                <button class="icon-button" id="next-slide" type="button" aria-label="Next slide" title="Next slide (→)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 5 7 7-7 7M3 5l7 7-7 7" /></svg>
+                </button>
+              </div>
+            </section>
+
+            <section class="panel toolbar-panel" aria-label="Canvas tools">
+              <div class="toolbar-tools" role="group" aria-label="Choose a canvas tool">
+                <button class="tool-button" data-tool="draw" type="button" aria-pressed="true" title="Draw annotations">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.5-1 11-11a2.1 2.1 0 0 0-3-3l-11 11L4 20Z" /><path d="m14.5 6.5 3 3" /></svg>
+                  <span>Draw</span>
+                </button>
+                <button class="tool-button" data-tool="pointer" type="button" aria-pressed="false" title="Show a presentation pointer">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 3 13 10-6 .7 2.5 6-2.6 1.1-2.5-6L6 19V3Z" /></svg>
+                  <span>Pointer</span>
+                </button>
+                <span class="toolbar-divider" aria-hidden="true"></span>
+                <button class="tool-button compact-tool" id="undo-button" type="button" title="Undo last annotation">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5M4 9h10a6 6 0 0 1 0 12h-2" /></svg>
+                  <span>Undo</span>
+                </button>
+                <button class="tool-button compact-tool" id="clear-button" type="button" title="Clear annotations on this image">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2m3 0-.8 14H5.8L5 6m4 4v6m6-6v6" /></svg>
+                  <span>Clear</span>
+                </button>
+              </div>
+              <div class="tool-hint" id="editor-message" role="status" aria-live="polite">Draw on the canvas or adjust the image settings.</div>
+            </section>
+          </div>
+
+          <aside class="inspector-column" aria-label="Image controls and gesture guide">
+            <section class="panel settings-panel" id="image-settings" aria-labelledby="settings-heading">
+              <header class="panel-heading">
+                <div class="panel-title-group">
+                  <span class="heading-icon purple-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M4 7h9m4 0h3M4 17h3m4 0h9M13 4v6M7 14v6" /></svg>
+                  </span>
+                  <div><h2 id="settings-heading">Image settings</h2><p>Fine-tune your visual</p></div>
+                </div>
+                <button class="text-button" id="reset-filters" type="button">Reset</button>
+              </header>
+              <div class="preset-row" role="group" aria-label="Image presets">
+                <button class="preset-button selected" data-preset="original" type="button" aria-pressed="true"><span class="preset-swatch swatch-original"></span>Original</button>
+                <button class="preset-button" data-preset="cinema" type="button" aria-pressed="false"><span class="preset-swatch swatch-cinema"></span>Cinema</button>
+                <button class="preset-button" data-preset="mono" type="button" aria-pressed="false"><span class="preset-swatch swatch-mono"></span>Mono</button>
+              </div>
+              <div class="slider-list">
+                <label class="slider-control" for="brightness-slider"><span>Brightness</span><output id="brightness-value" for="brightness-slider">100%</output><input id="brightness-slider" type="range" min="50" max="150" value="100" /></label>
+                <label class="slider-control" for="contrast-slider"><span>Contrast</span><output id="contrast-value" for="contrast-slider">100%</output><input id="contrast-slider" type="range" min="50" max="150" value="100" /></label>
+                <label class="slider-control" for="saturation-slider"><span>Saturation</span><output id="saturation-value" for="saturation-slider">100%</output><input id="saturation-slider" type="range" min="0" max="200" value="100" /></label>
+              </div>
+              <button class="export-button" id="export-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 16v4h14v-4" /></svg>
+                Export image
+              </button>
+            </section>
+
+            <section class="panel camera-panel" id="camera-panel" aria-labelledby="camera-heading">
+              <header class="panel-heading compact-heading">
+                <div class="panel-title-group">
+                  <span class="heading-icon camera-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z" /><circle cx="12" cy="13" r="4" /></svg>
+                  </span>
+                  <div><h2 id="camera-heading">Camera preview</h2><p id="camera-status">Not connected</p></div>
+                </div>
+                <span class="mini-status" id="camera-indicator"><span class="status-dot"></span>OFF</span>
+              </header>
+              <div class="camera-frame" id="camera-frame">
+                <video id="camera-video" autoplay muted playsinline aria-label="Live camera preview"></video>
+                <div class="camera-placeholder" id="camera-placeholder">
+                  <span class="camera-placeholder-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z" /><circle cx="12" cy="13" r="4" /></svg>
+                  </span>
+                  <span>Camera preview is off</span>
+                </div>
+              </div>
+              <button class="camera-button" id="camera-button" type="button">Enable camera preview</button>
+              <p class="camera-disclaimer">Preview only. Gesture detection runs in the Python desktop controller.</p>
+            </section>
+
+            <section class="panel gesture-panel" id="gesture-guide" aria-labelledby="gesture-heading">
+              <header class="panel-heading compact-heading">
+                <div class="panel-title-group">
+                  <span class="heading-icon purple-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M8 11V5a1.5 1.5 0 0 1 3 0v5-7a1.5 1.5 0 0 1 3 0v7-5a1.5 1.5 0 0 1 3 0v7-3a1.5 1.5 0 0 1 3 0v6c0 4-2 7-6 7h-2c-2 0-3-.7-4-2l-3-4a1.8 1.8 0 0 1 2.8-2.2L8 16v-5Z" /></svg>
+                  </span>
+                  <div><h2 id="gesture-heading">Gesture guide</h2><p>From your desktop controller</p></div>
+                </div>
+                <span class="mini-status guide-status">GUIDE</span>
+              </header>
+              <ul class="gesture-list">
+                <li><span class="gesture-count">1</span><span>Draw annotation</span><span class="gesture-key">DRAW</span></li>
+                <li><span class="gesture-count">2</span><span>Move pointer</span><span class="gesture-key">POINTER</span></li>
+                <li><span class="gesture-count">3</span><span>Undo stroke</span><span class="gesture-key">UNDO</span></li>
+                <li><span class="gesture-count">4</span><span>Clear strokes</span><span class="gesture-key">CLEAR</span></li>
+                <li><span class="gesture-count fist-count">●</span><span>Lock / unlock</span><span class="gesture-key">FIST</span></li>
+              </ul>
+              <div class="swipe-note"><span class="swipe-arrow" aria-hidden="true">← →</span><span>Swipe to change slides</span></div>
+            </section>
+          </aside>
+        </section>
+        <footer class="app-footer"><span>VISTARA <span class="brand-spark">✦</span></span><span>Built for hands-free presenting</span><span>Images stay in this browser session</span></footer>
+      </main>
+    </div>
+  </body>
+</html>
